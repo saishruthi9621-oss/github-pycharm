@@ -16,3 +16,5 @@ df["income"] = pd.to_numeric(
 
 print(df.head())
 print(df.info())
+
+print (df["income"].describe())
