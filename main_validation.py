@@ -3,8 +3,9 @@ import pandas as pd
 
 from src.config import (
     VALIDATION_FILE,
-    MODEL_FILE,
+    DEVELOPMENT_FILE,
     DEVELOPMENT_RESULTS_FILE,
+    MODEL_FILE,
     OUTPUT_DIR,
     REPORT_DIR
 )
@@ -18,6 +19,7 @@ from src.calibration import Calibration
 from src.psi import PSIValidator
 from src.benchmark import Benchmark
 from src.report_generator import ReportGenerator
+
 
 
 def main():
@@ -46,6 +48,10 @@ def main():
 
     print(
         f"Validation Data Loaded: {df.shape}"
+    )
+
+    dev_df = DataLoader.load_csv(
+        DEVELOPMENT_FILE
     )
 
     # ----------------------------------
@@ -80,6 +86,14 @@ def main():
 
     print(
         "Scoring Output Generated"
+    )
+
+    dev_scoring_df = (
+        ScoreGenerator
+        .generate_scores(
+            model,
+            dev_df
+        )
     )
 
     # ----------------------------------
@@ -167,7 +181,10 @@ def main():
     # PSI
     # ----------------------------------
 
-    psi_value = 0.07
+    psi_value = PSIValidator.calculate_psi(
+        dev_scoring_df["pd_score"],
+        scoring_df["pd_score"]
+    )
 
     print(
         f"PSI : {psi_value}"
